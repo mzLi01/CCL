@@ -8,6 +8,10 @@
 
 #include "ccl.h"
 
+#ifdef HAVE_ANGPOW
+#include "Angpow/angpow_ccl.h"
+#endif
+
 typedef struct{
   double l;
   ccl_cosmology *cosmo;
@@ -368,10 +372,13 @@ void ccl_angular_cls_nonlimber(ccl_cosmology *cosmo,
                                ccl_f2d_t *psp,
                                int nl_out, int *l_out, double *cl_out,
                                int *status) {
-  *status = CCL_ERROR_INCONSISTENT;
-  ccl_cosmology_set_status_message(
-    cosmo,
-    "ccl_cls.c: ccl_angular_cls_nonlimber(); non-Limber integrator not implemented yet\n");
+  if (trc1->n_tracers>1 || trc2->n_tracers>1) {
+    *status = CCL_ERROR_INCONSISTENT;
+    ccl_cosmology_set_status_message(
+      cosmo,
+      "ccl_cls.c: ccl_angular_cls_nonlimber(); non-Limber integrator on multiple tracers not implemented yet\n");
+  }
+  ccl_angular_cls_angpow(cosmo, trc1->ts[0], trc2->ts[0], psp, nl_out, l_out, cl_out, status);
 }
 
 static double cov_integrand(double chi, void *params)

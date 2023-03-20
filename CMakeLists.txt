@@ -51,11 +51,10 @@ set(EXTRA_DIST_DIRS)
 include(BuildFFTW)
 include(BuildGSL)
 
-# Uncomment below when we bring ANGPOW back
 # Builds Angpow
 # TODO: the same mechanism as for CLASS could be used here to provide the
 # option to use a pre-installed version of angpow
-#include(BuildAngpow)
+include(BuildAngpow)
 
 if(("${CMAKE_C_COMPILER_ID}" MATCHES "^(Apple)+Clang$") AND (CMAKE_C_COMPILER_VERSION LESS 13) AND NOT FORCE_OPENMP)
     # Apple Clang 12 (and maybe below) have issues with OpenMP and cmake, so we don't try to find it
@@ -98,17 +97,14 @@ include_directories(include)
 # Compiles all the source files
 add_library(objlib OBJECT ${CCL_SRC})
 # Make sure the external projects are correclty built
-# Uncomment below when we bring ANGPOW back
-#add_dependencies(objlib ANGPOW)
+add_dependencies(objlib ANGPOW)
 if(NOT GSL_FOUND)
     add_dependencies(objlib GSL)
-# Uncomment below when we bring ANGPOW back
-#    add_dependencies(ANGPOW GSL)
+    add_dependencies(ANGPOW GSL)
 endif()
 if(NOT FFTW_FOUND)
     add_dependencies(objlib FFTW)
-# Uncomment below when we bring ANGPOW back
-#    add_dependencies(ANGPOW FFTW)
+    add_dependencies(ANGPOW FFTW)
 endif()
 
 # The reason for building ccl as a shared library is that we can link it to
